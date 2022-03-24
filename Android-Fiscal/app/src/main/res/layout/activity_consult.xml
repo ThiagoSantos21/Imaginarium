@@ -7,16 +7,24 @@
     tools:context=".ConsultActivity"
     android:orientation="vertical">
 
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/etPlaca"
-        android:layout_width="200sp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textField"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Digite a placa"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50sp"/>
+        android:layout_marginTop="50sp"
+        android:gravity="center_horizontal"
+        app:startIconDrawable="@drawable/outline_search_24"
+        app:startIconTint="@color/blue">
 
-    <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="250sp"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btConsultar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,6 +43,5 @@
         android:layout_marginTop="30sp"
         android:textColor="@color/red"
         android:visibility="gone"/>
-
-
+    
 </androidx.appcompat.widget.LinearLayoutCompat>

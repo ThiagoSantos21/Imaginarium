@@ -17,26 +17,27 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="20sp"
-        android:background="@color/purple_500"
-
+        android:background="@color/blue"
         android:layout_marginBottom="20sp"/>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btConsultar"
-        android:layout_width="200sp"
+        android:layout_width="220sp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30sp"
-        android:background="@color/purple_500"
+        app:backgroundTint="@color/blue"
         android:text="Consultar placa"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="200sp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btItinerario"
+        android:layout_width="220sp"
         android:layout_height="wrap_content"
         android:text="Visualizar itinerário"
-        android:background="@color/purple_500"
-        android:textColor="#ffffff"
+        app:backgroundTint="@color/blue"
+        android:textColor="@color/white"
         android:layout_gravity="center_horizontal"
         />
 
