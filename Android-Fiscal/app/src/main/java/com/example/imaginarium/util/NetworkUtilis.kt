@@ -1,4 +1,4 @@
-package com.example.imaginarium.Util
+package com.example.imaginarium.util
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -44,6 +44,16 @@
         android:textColor="@color/green"
         android:visibility="gone"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btIrregular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registrar Irregularidade"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20sp"
+        app:backgroundTint="@color/red"
+        android:visibility="gone"/>
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardInfo"
         android:layout_width="match_parent"
