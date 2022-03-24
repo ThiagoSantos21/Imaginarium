@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         btConsultar = findViewById(R.id.btConsultar)
         btItinerario = findViewById(R.id.btItinerario)
         btConsultar.setOnClickListener(){
-            val view = "ConsultActivity"
             startActivity()
         }
         btItinerario.setOnClickListener(){

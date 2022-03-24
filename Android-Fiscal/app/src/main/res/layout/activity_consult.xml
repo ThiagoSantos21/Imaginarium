@@ -8,16 +8,16 @@
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textField"
-        android:layout_width="match_parent"
+        android:layout_width="250sp"
         android:layout_height="wrap_content"
         android:hint="Digite a placa"
         android:layout_marginTop="50sp"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         app:startIconDrawable="@drawable/outline_search_24"
         app:startIconTint="@color/blue">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPlaca"
             android:layout_width="250sp"
             android:layout_height="wrap_content"
             />
@@ -36,12 +36,68 @@
         android:id="@+id/tvStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Veículo não encontrado"
+        android:text="Veículo encontrado"
         android:textSize="20sp"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:layout_marginTop="30sp"
-        android:textColor="@color/red"
+        android:textColor="@color/green"
         android:visibility="gone"/>
-    
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Informações do veículo"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Placa do veiculo: ABC - 1234"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Id do Ticket : i23t89y3ofhqwrpi8f"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Hora da entrada: 13:30:00"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>
