@@ -14,8 +14,8 @@ export const addTicket = functions
     .https.onRequest(async (request, response) => {
       const t = {
         placa: String,
-        horaEntrada: Date,
-        horaSaida: Date,
+        horaEntrada: String,
+        horaSaida: String,
         tipoVeiculo: String,
       };
       try {
@@ -35,5 +35,5 @@ export const searchTicket = functions
       snapshot.forEach((doc) => {
         search.push(doc.data());
       });
-      response.status(200).json(search);
+      response.json(search);
     });
