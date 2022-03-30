@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="540sp"
+        android:src="@drawable/ic_launcher_foreground"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="20sp"
+        android:background="@color/blue"
+        android:layout_marginBottom="20sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btConsultar"
+        android:layout_width="220sp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30sp"
+        app:backgroundTint="@color/blue"
+        android:text="Consultar placa"
+        android:textColor="@color/white"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btItinerario"
+        android:layout_width="220sp"
+        android:layout_height="wrap_content"
+        android:text="Visualizar itinerário"
+        app:backgroundTint="@color/blue"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"
+        />
+
+
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
