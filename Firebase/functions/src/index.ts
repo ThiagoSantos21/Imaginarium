@@ -14,8 +14,8 @@ export const addTicket = functions
     .https.onRequest(async (request, response) => {
       const t = {
         placa: String,
-        horaEntrada: Date,
-        horaSaida: Date,
+        horaEntrada: String,
+        horaSaida: String,
         tipoVeiculo: String,
       };
       try {
@@ -24,4 +24,16 @@ export const addTicket = functions
       } catch (e) {
         response.send("erro ao inserir veiculo");
       }
+    });
+
+export const searchTicket = functions
+    .region("southamerica-east1")
+    .https.onRequest(async (request, response) => {
+      const placa = request.query.placa;
+      const snapshot = await ticket.where("placa", "==", placa).get();
+      const search : FirebaseFirestore.DocumentData = [];
+      snapshot.forEach((doc) => {
+        search.push(doc.data());
+      });
+      response.json(search);
     });
