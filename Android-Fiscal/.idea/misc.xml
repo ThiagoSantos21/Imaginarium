@@ -3,8 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2395" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2395" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2395" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/drawable/outline_search_24.xml" value="0.2395" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/drawable/roundcorner.xml" value="0.2395" />
         <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/layout/activity_camera_preview.xml" value="0.17147922998986828" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/layout/activity_consult.xml" value="0.19610507246376813" />
         <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/layout/activity_itinerary.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/thiag/Documents/Repositorios/Imaginarium/Android-Fiscal/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

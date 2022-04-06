@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:layout_gravity="center_horizontal">
+    android:layout_gravity="center_horizontal"
+    >
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
@@ -18,30 +19,56 @@
         android:layout_width="match_parent"
         android:layout_height="20sp"
         android:background="@color/blue"
-        android:layout_marginBottom="20sp"/>
+        android:layout_marginBottom="30sp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btConsultar"
-        android:layout_width="220sp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="30sp"
-        app:backgroundTint="@color/blue"
-        android:text="Consultar placa"
-        android:textColor="@color/white"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="25sp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etPlaca"
+            android:layout_width="250sp"
+            android:layout_height="50sp"
+            android:hint="Digite a placa"
+            android:layout_marginTop="50sp"
+            android:layout_gravity="center_horizontal"
+            app:startIconDrawable="@drawable/outline_search_24"
+            app:startIconTint="@color/blue"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="250sp"
+                android:layout_height="wrap_content"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btConsultar"
+            android:layout_marginTop="7sp"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            android:src="@drawable/ic_baseline_search_24"
+            android:backgroundTint="@color/blue"
+            android:background="@drawable/roundcorner"
+            android:tint="@color/white"
+            android:layout_marginLeft="30sp"
+            />
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btItinerario"
-        android:layout_width="220sp"
+        android:layout_width="320sp"
         android:layout_height="wrap_content"
         android:text="Visualizar itinerário"
         app:backgroundTint="@color/blue"
         android:textColor="@color/white"
+        android:textSize="20sp"
         android:layout_gravity="center_horizontal"
         />
-
-
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
