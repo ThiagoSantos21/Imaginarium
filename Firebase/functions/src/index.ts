@@ -5,7 +5,6 @@ const app = admin.initializeApp();
 const db = app.firestore();
 const ticket = db.collection("ticket");
 
-
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 
