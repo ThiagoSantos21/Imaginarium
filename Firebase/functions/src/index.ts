@@ -1,10 +1,12 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+//import { database } from "firebase-functions/v1/firestore";
 
 const app = admin.initializeApp();
 const db = app.firestore();
 const ticket = db.collection("ticket");
 
+<<<<<<< Updated upstream
 interface CallableResponse{
   status: string,
   message: string,
@@ -71,12 +73,18 @@ function errorMessage(valid: number): string {
   }
   return message;
 }
+=======
+interface Ticket{
+  placa: string,
+  horaEntrada: string,
+  horaSaida: string,
+  tipoVeiculo: string
+}
+>>>>>>> Stashed changes
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-
-export const addTicket = functions
+/*export const addTicket = functions
     .region("southamerica-east1")
+<<<<<<< Updated upstream
     .https.onCall(async (data, context) => {
       let result : CallableResponse;
       const hour: FirebaseFirestore.Timestamp =
@@ -87,6 +95,13 @@ export const addTicket = functions
         placa: data.placa,
         horaEntrada: hour.toDate(),
         horaSaida: hour.toDate(),
+=======
+    .https.onRequest(async (data, context) => {
+      const t = {
+        placa: data.placa,
+        horaEntrada: data.horaEntrada,
+        horaSaida: data.horaSaida,
+>>>>>>> Stashed changes
         tipoVeiculo: data.tipoVeiculo,
       };
       t.horaSaida.setHours(saida);
@@ -108,19 +123,30 @@ export const addTicket = functions
           payload: JSON.parse(JSON.stringify({placa: t.placa})),
         };
       }
+<<<<<<< Updated upstream
 
       return result;
     });
+=======
+    });*/
+>>>>>>> Stashed changes
 
 /* export const searchTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
+<<<<<<< Updated upstream
       const snapshot = await ticket.where("placa", "==", data.placa).get();
+=======
+      let t: Ticket;
+      const placa = data;
+      const snapshot = await ticket.where("placa", "==", placa).get();
+>>>>>>> Stashed changes
       const search : FirebaseFirestore.DocumentData = [];
 
       snapshot.forEach((doc) => {
         search.push(doc.data());
       });
+<<<<<<< Updated upstream
 
       const valid = isValid(search);
 
@@ -156,3 +182,13 @@ export const addTicket = functions
       }
       return result;
     }); */
+=======
+      t = {
+        placa: search.placa,
+        horaEntrada: search.horaEntrada,
+        horaSaida: search.horaSaida,
+        tipoVeiculo: search.tipoVeiculo,
+      }
+      return t;
+    });
+>>>>>>> Stashed changes

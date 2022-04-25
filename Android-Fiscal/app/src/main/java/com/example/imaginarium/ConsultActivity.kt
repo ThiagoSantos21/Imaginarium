@@ -1,63 +1,85 @@
 package com.example.imaginarium
 
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.imaginarium.databinding.ActivityConsultBinding
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.datepicker.MaterialTextInputPicker
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
+import com.google.gson.GsonBuilder
+import com.google.type.Date
+import java.text.SimpleDateFormat
 
 class ConsultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConsultBinding
 
+    private lateinit var functions: FirebaseFunctions
+
+    private val logEntry = "PROCURA_PLACA";
+
+    private val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        functions = Firebase.functions("southamerica-east1")
 
         binding = ActivityConsultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btConsultar.setOnClickListener(){
-            showResult()
-        }
-        binding.btIrregular.setOnClickListener(){
-            cameraPermission.launch(android.Manifest.permission.CAMERA)
+        binding.btConsultar.setOnClickListener() {
+            showResult().addOnCompleteListener(OnCompleteListener{ task ->
+                if (task.isSuccessful) {
+
+                    val genericResp =
+                        gson.fromJson(task.result, FunctionGenericResponse::class.java)
+
+                    Log.i(logEntry, genericResp.status.toString())
+                    Log.i(logEntry, genericResp.message.toString())
+                    Log.i(logEntry, genericResp.payload.toString())
+
+                    val insertInfo =
+                        gson.fromJson(task.result.toString(), GenericInsertResponse::class.java)
+
+                    Snackbar.make(
+                        binding.btConsultar, "Placa encontrada: " + insertInfo.docId,
+                        Snackbar.LENGTH_LONG
+                    ).show();
+                }
+            })
+            binding.btIrregular.setOnClickListener() {
+                cameraPermission.launch(android.Manifest.permission.CAMERA)
+            }
         }
     }
 
-    private fun showResult(){
-        val teste = "ABC1234"
-        if(binding.etPlaca.text.isNullOrEmpty()){
-            Snackbar.make(binding.tvStatus, "Informe a placa", Snackbar.LENGTH_LONG).show()
-        }
-        else {
-            if (binding.etPlaca.text.toString() == teste) {
-                binding.tvStatus.text = "Veiculo encontrado"
-                binding.tvStatus.setTextColor(Color.parseColor("#0CE315"))
-                binding.btIrregular.visibility = GONE
-                binding.tvStatus.visibility = VISIBLE
-                binding.cardInfo.visibility = VISIBLE
-            } else {
-                binding.cardInfo.visibility = GONE
-                binding.tvStatus.text = "Veiculo nao encontrado"
-                binding.tvStatus.setTextColor(Color.parseColor("#FF0303"))
-                binding.tvStatus.visibility = VISIBLE
-                binding.btIrregular.visibility = VISIBLE
+    private fun showResult(): Task<String> {
+
+
+        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+        val currentDate = sdf.format(Date())
+
+        val data = hashMapOf(
+            "placa" to binding.etPlaca
+            "horaEntrada" to Date.getDate
+        )
+
+        return functions
+            .getHttpsCallable("searchTicket")
+            .call(data)
+            .continueWith { task ->
+                val res = gson.toJson(task.result?.data)
+                res
             }
-        }
+
+
     }
 
     private val cameraPermission =

@@ -33,35 +33,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:792467159304:android:6d9c9ad8b0ed4fafc094bd",
-        "android_client_info": {
-          "package_name": "com.imaginarium.fiscal"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "792467159304-fl6uli1sgjovmukid9s8ea00g4p5h166.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCJCKptdA9JVourGyCd6Z4izSjt7y-YvRQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "792467159304-fl6uli1sgjovmukid9s8ea00g4p5h166.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"
