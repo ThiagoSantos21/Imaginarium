@@ -18,9 +18,9 @@ import java.text.SimpleDateFormat
 
 class ConsultActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityConsultBinding
+    private var binding: ActivityConsultBinding = ActivityConsultBinding.inflate(layoutInflater)
 
-    private lateinit var functions: FirebaseFunctions
+    private var functions: FirebaseFunctions = Firebase.functions("southamerica-east1")
 
     private val logEntry = "PROCURA_PLACA";
 
@@ -28,14 +28,11 @@ class ConsultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        functions = Firebase.functions("southamerica-east1")
-
-        binding = ActivityConsultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.btConsultar.setOnClickListener() {
-            showResult().addOnCompleteListener(OnCompleteListener{ task ->
+            var placa = binding.etPlaca.toString()
+            showResult(placa).addOnCompleteListener(OnCompleteListener{ task ->
                 if (task.isSuccessful) {
 
                     val genericResp =
@@ -45,13 +42,13 @@ class ConsultActivity : AppCompatActivity() {
                     Log.i(logEntry, genericResp.message.toString())
                     Log.i(logEntry, genericResp.payload.toString())
 
-                    val insertInfo =
+                    /*val insertInfo =
                         gson.fromJson(task.result.toString(), GenericInsertResponse::class.java)
 
                     Snackbar.make(
-                        binding.btConsultar, "Placa encontrada: " + insertInfo.docId,
+                        binding.btConsultar, "Placa encontrada: " + insertInfo.placa,
                         Snackbar.LENGTH_LONG
-                    ).show();
+                    ).show();*/
                 }
             })
             binding.btIrregular.setOnClickListener() {
@@ -60,15 +57,10 @@ class ConsultActivity : AppCompatActivity() {
         }
     }
 
-    private fun showResult(): Task<String> {
-
-
-        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-        val currentDate = sdf.format(Date())
+    private fun showResult(placa: String): Task<String> {
 
         val data = hashMapOf(
-            "placa" to binding.etPlaca
-            "horaEntrada" to Date.getDate
+            "placa" to placa
         )
 
         return functions

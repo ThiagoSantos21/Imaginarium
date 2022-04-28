@@ -30,7 +30,6 @@
         android:layout_marginBottom="25sp">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/etPlaca"
             android:layout_width="250sp"
             android:layout_height="50sp"
             android:hint="Digite a placa"
@@ -40,6 +39,7 @@
             app:startIconTint="@color/blue"
             >
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPlaca"
                 android:layout_width="250sp"
                 android:layout_height="wrap_content"
                 />

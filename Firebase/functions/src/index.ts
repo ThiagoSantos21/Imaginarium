@@ -1,12 +1,11 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-//import { database } from "firebase-functions/v1/firestore";
+// import { database } from "firebase-functions/v1/firestore";
 
 const app = admin.initializeApp();
 const db = app.firestore();
 const ticket = db.collection("ticket");
 
-<<<<<<< Updated upstream
 interface CallableResponse{
   status: string,
   message: string,
@@ -17,7 +16,6 @@ interface Ticket{
   placa: string,
   horaEntrada: Date,
   horaSaida: Date,
-  tipoVeiculo: string
 }
 
 /**
@@ -32,9 +30,6 @@ interface Ticket{
 function errorCode(t: Ticket): number {
   if (t.placa == null) {
     return 3;
-  }
-  if (t.tipoVeiculo == null) {
-    return 4;
   }
   return 5;
 }
@@ -66,25 +61,12 @@ function errorMessage(valid: number): string {
       message = "Placa inválida";
       break;
     }
-    case 4: {
-      message = "Tipo do veículo inválido";
-      break;
-    }
   }
   return message;
 }
-=======
-interface Ticket{
-  placa: string,
-  horaEntrada: string,
-  horaSaida: string,
-  tipoVeiculo: string
-}
->>>>>>> Stashed changes
 
-/*export const addTicket = functions
+export const addTicket = functions
     .region("southamerica-east1")
-<<<<<<< Updated upstream
     .https.onCall(async (data, context) => {
       let result : CallableResponse;
       const hour: FirebaseFirestore.Timestamp =
@@ -95,14 +77,6 @@ interface Ticket{
         placa: data.placa,
         horaEntrada: hour.toDate(),
         horaSaida: hour.toDate(),
-=======
-    .https.onRequest(async (data, context) => {
-      const t = {
-        placa: data.placa,
-        horaEntrada: data.horaEntrada,
-        horaSaida: data.horaSaida,
->>>>>>> Stashed changes
-        tipoVeiculo: data.tipoVeiculo,
       };
       t.horaSaida.setHours(saida);
 
@@ -123,72 +97,46 @@ interface Ticket{
           payload: JSON.parse(JSON.stringify({placa: t.placa})),
         };
       }
-<<<<<<< Updated upstream
 
       return result;
     });
-=======
-    });*/
->>>>>>> Stashed changes
 
-/* export const searchTicket = functions
+export const searchTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
-<<<<<<< Updated upstream
-      const snapshot = await ticket.where("placa", "==", data.placa).get();
-=======
-      let t: Ticket;
-      const placa = data;
-      const snapshot = await ticket.where("placa", "==", placa).get();
->>>>>>> Stashed changes
-      const search : FirebaseFirestore.DocumentData = [];
+      const snapshot = await ticket.get();
+      let result: CallableResponse;
+
+      const p = {
+        placa: data.placa,
+      };
+
+      functions.logger.info("Valor de P : " + p.placa);
+
+      result = {
+        status: "ERROR",
+        message: "Não foi encontrado",
+        payload: JSON.parse(JSON.stringify({placa: null})),
+      };
 
       snapshot.forEach((doc) => {
-        search.push(doc.data());
-      });
-<<<<<<< Updated upstream
+        const d = doc.data();
+        const plateTicket: Ticket = {
+          placa: d.placa,
+          horaEntrada: d.horaEntrada,
+          horaSaida: d.horaSaida,
+        };
 
-      const valid = isValid(search);
-
-      const message = validResult(valid);
-
-      let result!: CallableResponse;
-
-      switch (valid) {
-        case 0: {
-          result = {
-            status: "ERROR",
-            message: message,
-            payload: JSON.parse(JSON.stringify({docId: null})),
-          };
-          break;
-        }
-        case 1: {
-          result = {
-            status: "ERROR",
-            message: message,
-            payload: JSON.parse(JSON.stringify({docId: null})),
-          };
-          break;
-        }
-        case 2: {
+        if (p.placa === plateTicket.placa) {
           result = {
             status: "SUCCESS",
-            message: message,
-            payload: JSON.parse(JSON.stringify({docId: search})),
+            message: "Placa encontrada",
+            payload: JSON.parse(JSON.stringify({
+              placa: plateTicket.placa,
+              horaEntrada: plateTicket.horaEntrada,
+              horaSaida: plateTicket.horaSaida})),
           };
-          break;
         }
-      }
-      return result;
-    }); */
-=======
-      t = {
-        placa: search.placa,
-        horaEntrada: search.horaEntrada,
-        horaSaida: search.horaSaida,
-        tipoVeiculo: search.tipoVeiculo,
-      }
-      return t;
+      });
+      return result.payload;
     });
->>>>>>> Stashed changes
