@@ -1,5 +1,6 @@
 package com.example.imaginarium
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.appcompat.widget.AppCompatButton
 import com.example.imaginarium.databinding.ActivityMainBinding
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.functions.FirebaseFunctions
@@ -44,32 +46,51 @@ class MainActivity : AppCompatActivity() {
                 searchTicket(placa).addOnCompleteListener(OnCompleteListener{ task ->
                     if (task.isSuccessful) {
 
+                        var Entrada: Timestamp? = null
+                        var Saida: Timestamp? = null
                         val result =
-                            gson.fromJson(task.result, PayloadGenericResponse::class.java)
+                            gson.fromJson(task.result, FunctionGenericResponse::class.java)
 
-                        /*var ticket = Ticket(result.placa.toString(),
-                            gson.fromJson(result.horaEntrada.toString(), Timestamp::class.java),
-                            gson.fromJson(result.horaSaida.toString(), Timestamp::class.java))*/
+                        Log.i("Status", result.status.toString())
+                        Log.i("Message", result.message.toString())
 
-                        /*Log.i("Placa", ticket.placa)
-                        Log.i("Hora entrada", ticket.horaEntrada.toString())
-                        Log.i("Hora Saida", ticket.horaSaida.toString())*/
+                        val payload =
+                            gson.fromJson(result.payload.toString(), PayloadGenericResponse::class.java)
 
-                        val horaEntrada = gson.fromJson(result.horaEntrada.toString(), TimeGenericResponse::class.java)
+                        Log.i("Placa", payload.placa.toString())
 
-                        val Entrada: Timestamp? =
-                            horaEntrada.seconds?.let { it1 -> horaEntrada.nanoseconds?.let { it2 ->
-                                Timestamp(it1, it2)
-                            } }
+                        val horaEntrada =
+                            gson.fromJson(payload.horaEntrada.toString(), TimeGenericResponse::class.java)
 
-                        if (Entrada != null) {
-                            Log.i("Hora entrada", Entrada.toDate().toString())
+                        if (horaEntrada != null) {
+                            Entrada =
+                                horaEntrada.seconds?.let { it1 -> horaEntrada.nanoseconds?.let { it2 ->
+                                    Timestamp(it1,
+                                        it2
+                                    )
+                                } }
                         }
 
-                        Snackbar.make(
-                            binding.btConsultar, "Placa encontrada: " + result.placa,
-                            Snackbar.LENGTH_LONG
-                        ).show();
+                        val horaSaida =
+                            gson.fromJson(payload.horaSaida.toString(), TimeGenericResponse::class.java)
+
+                        if (horaSaida != null) {
+                            Saida=
+                                horaSaida.seconds?.let { it1 -> horaSaida.nanoseconds?.let { it2 ->
+                                    Timestamp(it1,
+                                        it2
+                                    )
+                                } }
+
+                            if (Entrada != null && Saida != null) {
+                                MaterialAlertDialogBuilder(this)
+                                    .setTitle("${result.message.toString()}")
+                                    .setMessage("Placa: ${payload.placa.toString()}\nEntrada: ${Entrada.toDate().toString()}\nSaida: ${Saida.toDate().toString()}")
+                                    .setNeutralButton("OK"
+                                    ) { dialog, which -> }
+                                    .show()
+                            }
+                        }
                     }
                 })
             }

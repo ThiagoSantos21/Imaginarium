@@ -111,8 +111,6 @@ export const searchTicket = functions
         placa: data.placa,
       };
 
-      functions.logger.info("Valor de P : " + p.placa);
-
       result = {
         status: "ERROR",
         message: "Não foi encontrado",
@@ -138,5 +136,5 @@ export const searchTicket = functions
           };
         }
       });
-      return result.payload;
+      return result;
     });
