@@ -1,8 +1,10 @@
 package com.example.imaginarium
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.Image
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,6 +38,7 @@ class CameraPreviewActivity : AppCompatActivity() {
         binding = ActivityCameraPreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val request = intent.getIntExtra("Request",0)
         cameraProvider = ProcessCameraProvider.getInstance(this)
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         imgCaptureExecutor = Executors.newSingleThreadExecutor()
@@ -43,10 +46,15 @@ class CameraPreviewActivity : AppCompatActivity() {
         startCamera()
 
         binding.btFoto.setOnClickListener(){
-            takePhoto()
+            val uri= takePhoto()
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 blinkPreview()
             }
+            val intent = Intent(this,IrregularityActivity::class.java)
+            intent.putExtra("uri",uri)
+            intent.putExtra("Request",request)
+            startActivity(intent)
+
         }
     }
 
@@ -70,11 +78,13 @@ class CameraPreviewActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun takePhoto(){
+    private fun takePhoto() : Uri{
+
+        val fileName =  "JPEG_${System.currentTimeMillis()}"
+        val file = File(externalMediaDirs[0], fileName)
+
         imageCapture?.let{
 
-            val fileName =  "JPEG_${System.currentTimeMillis()}"
-            val file = File(externalMediaDirs[0], fileName)
 
             val outputFile = ImageCapture.OutputFileOptions.Builder(file).build()
 
@@ -91,7 +101,11 @@ class CameraPreviewActivity : AppCompatActivity() {
                         Log.e("CameraPreview","Exceção ao gravar arquivo da foto: $exception")
                     }
                 })
+
             }
+
+        return file.toUri()
+
         }
 
         @RequiresApi(Build.VERSION_CODES.M)

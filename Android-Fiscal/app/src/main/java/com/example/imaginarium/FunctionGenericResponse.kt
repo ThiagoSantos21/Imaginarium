@@ -6,7 +6,8 @@ class FunctionGenericResponse {
 
     enum class StatusType(val type: String) {
         ERROR("ERROR"),
-        SUCCESS("SUCCESS");
+        SUCCESS("SUCCESS"),
+        NOTFOUND("NOTFOUND");
     }
 
     @SerializedName("status")

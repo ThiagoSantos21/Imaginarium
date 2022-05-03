@@ -1,21 +1,21 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-// import { database } from "firebase-functions/v1/firestore";
 
 const app = admin.initializeApp();
 const db = app.firestore();
 const ticket = db.collection("ticket");
+const itinerary = db.collection("itinerary");
 
-interface CallableResponse{
+interface CallableResponse {
   status: string,
   message: string,
   payload: JSON,
 }
 
-interface Ticket{
+interface Ticket {
   placa: string,
-  horaEntrada: Date,
-  horaSaida: Date,
+  horaEntrada: FirebaseFirestore.Timestamp,
+  horaSaida: FirebaseFirestore.Timestamp,
 }
 
 /**
@@ -65,21 +65,60 @@ function errorMessage(valid: number): string {
   return message;
 }
 
+/**
+ * Função que verifica a hora de saida do ticket
+ * @param {Ticket} p
+ * Ticket que será verificado
+ * @return {CallableResponse}
+ * Retorna o resultado da validação
+*/
+function validateTime(p: Ticket): CallableResponse {
+  let result: CallableResponse;
+
+  const now: FirebaseFirestore.Timestamp =
+  admin.firestore.Timestamp.now();
+
+  if (p.horaSaida.seconds < now.seconds) {
+    result = {
+      status: "ERROR",
+      message: "Tempo expirado",
+      payload: JSON.parse(JSON.stringify({
+        placa: p.placa,
+        horaEntrada: p.horaEntrada,
+        horaSaida: p.horaSaida,
+      })),
+    };
+  } else {
+    result = {
+      status: "SUCCESS",
+      message: "Placa válida",
+      payload: JSON.parse(JSON.stringify({
+        placa: p.placa,
+        horaEntrada: p.horaEntrada,
+        horaSaida: p.horaSaida,
+      })),
+    };
+  }
+  return result;
+}
+
 export const addTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
-      let result : CallableResponse;
-      const hour: FirebaseFirestore.Timestamp =
+      let result: CallableResponse;
+      const entrada: FirebaseFirestore.Timestamp =
       admin.firestore.Timestamp.now();
-      const saida: number = hour.toDate().getHours() + data.estadia;
+
+      const saida =
+        new admin.firestore
+            .Timestamp(entrada.seconds + (data.estadia * 3600)
+                , entrada.nanoseconds);
 
       const t: Ticket = {
         placa: data.placa,
-        horaEntrada: hour.toDate(),
-        horaSaida: hour.toDate(),
+        horaEntrada: entrada,
+        horaSaida: saida,
       };
-      t.horaSaida.setHours(saida);
-
       const errorcode = errorCode(t);
       const errormessage = errorMessage(errorcode);
 
@@ -101,22 +140,32 @@ export const addTicket = functions
       return result;
     });
 
+/* export const addMarker = functions
+    .region("southamerica-east1")
+    .https.onCall(async (data, context) => {
+      const m: Marker = {
+        Name: data.Name,
+        LatLng: data.LatLng,
+        Address: data.Address,
+      };
+      await marker.add(m);
+
+      return m;
+    }); */
+
 export const searchTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
       const snapshot = await ticket.get();
       let result: CallableResponse;
 
-      const p = {
-        placa: data.placa,
-      };
+      let p: Ticket;
 
       result = {
-        status: "ERROR",
-        message: "Não foi encontrado",
+        status: "NOTFOUND",
+        message: "Veículo não registrado",
         payload: JSON.parse(JSON.stringify({placa: null})),
       };
-
       snapshot.forEach((doc) => {
         const d = doc.data();
         const plateTicket: Ticket = {
@@ -125,16 +174,35 @@ export const searchTicket = functions
           horaSaida: d.horaSaida,
         };
 
-        if (p.placa === plateTicket.placa) {
-          result = {
-            status: "SUCCESS",
-            message: "Placa encontrada",
-            payload: JSON.parse(JSON.stringify({
-              placa: plateTicket.placa,
-              horaEntrada: plateTicket.horaEntrada,
-              horaSaida: plateTicket.horaSaida})),
+        if (data.placa === plateTicket.placa) {
+          p = {
+            placa: plateTicket.placa,
+            horaEntrada: plateTicket.horaEntrada,
+            horaSaida: plateTicket.horaSaida,
           };
+          result = validateTime(p);
         }
       });
+      functions.logger.info(result.status.toString());
       return result;
     });
+
+/* export const getZonaAzul = functions
+    .region("southamerica-east1")
+    .https.onCall(async (data, context) => {
+      functions.logger.info("getZonaAzul - Iniciada.");
+      const itinerario:Array<ZonaAzul> = []
+      const snapshot = await colZonaAzul.get();
+
+      let tempMarker: ZonaAzul;
+      snapshot.forEach((doc) => {
+        const d = doc.data();
+        tempMarker = {
+          LatLng: d.LatLng,
+          title: d.title,
+          snippet: d.snippet
+        };
+        itinerario.push(tempMarker);
+      });
+      return itinerario;
+    });*/
