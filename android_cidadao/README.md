@@ -1,6 +1,6 @@
 # android_cidadao
 
-Modulo cidadão PI3
+A new Flutter project.
 
 ## Getting Started
 
