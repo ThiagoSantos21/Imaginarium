@@ -1,4 +1,4 @@
-package com.example.android_cidadao
+package com.example.maps_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
