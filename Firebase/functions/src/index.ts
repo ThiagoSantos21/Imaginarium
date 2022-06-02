@@ -5,64 +5,25 @@ const app = admin.initializeApp();
 const db = app.firestore();
 const ticket = db.collection("ticket");
 const itinerary = db.collection("itinerary");
+const payment = db.collection("payment");
 
 interface CallableResponse {
   status: string,
   message: string,
-  payload: JSON,
+  payload: string,
 }
 
 interface Ticket {
   placa: string,
   horaEntrada: FirebaseFirestore.Timestamp,
   horaSaida: FirebaseFirestore.Timestamp,
+  transactionId: string,
 }
 
-/**
-*Função que faz a validação do veículo
-*@param {Ticket} t
-*dados do veículo no firestore database
-*@return {number}
-*Retorna 0 caso não tenha o veículo
-*1 caso o veículo esteja inválido
-*2 caso o veículo esteja válido
-*/
-function errorCode(t: Ticket): number {
-  if (t.placa == null) {
-    return 3;
-  }
-  return 5;
-}
-
-/**
- * Função que determina a mensagem a ser enviada
- * @param {number} valid
- * Resultado da função isValid
- * @return {string}
- * Retorna a mensagem de acordo com o resultado da função isValid
-*/
-function errorMessage(valid: number): string {
-  let message = "";
-
-  switch (valid) {
-    case 0: {
-      message = "Veículo não encontrado";
-      break;
-    }
-    case 1: {
-      message = "Veículo inválido";
-      break;
-    }
-    case 2: {
-      message = "Veículo encontrado";
-      break;
-    }
-    case 3: {
-      message = "Placa inválida";
-      break;
-    }
-  }
-  return message;
+interface paymentResponse {
+  value: number,
+  transactionId: string,
+  result: string,
 }
 
 /**
@@ -86,6 +47,7 @@ function validateTime(p: Ticket): CallableResponse {
         placa: p.placa,
         horaEntrada: p.horaEntrada,
         horaSaida: p.horaSaida,
+        transactionId: p.transactionId,
       })),
     };
   } else {
@@ -96,7 +58,67 @@ function validateTime(p: Ticket): CallableResponse {
         placa: p.placa,
         horaEntrada: p.horaEntrada,
         horaSaida: p.horaSaida,
+        transactionId: p.transactionId,
       })),
+    };
+  }
+  return result;
+}
+
+/**
+ * Sorteia um numero inteiro entre o minimo e maximo
+ * @param {number} min - numero minimo
+ * @param {number} max - numero maximo
+ * @return {number} numero sorteado
+ */
+function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Gera uma string aleatória
+ * @param {number} size - Tamanho da string, mínimo é 8 caracteres.
+ * @return {string} token ou string vazia (caso de erro)
+ */
+function generateRandomString(size: number): string {
+  let token = "";
+  const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+    "abcdefghijklmnopqrstuvwxyz0123456789";
+  // obtendo um numero (n) inteiro arredondado sempre para baixo.
+  const n = Math.floor(size);
+  if (n >= 8) {
+    let count = 0;
+    while (count < n) {
+      token += alfabeto.charAt(getRandomInt(0, (alfabeto.length -1)));
+      count++;
+    }
+  }
+  return token;
+}
+
+/**
+ * Função que verifica o pagamento do cartão
+ * @param {number} value
+ * Valor do pagamento
+ * @return {paymentResponse}
+ * Retorna o resultado da validação
+*/
+function paymentSimulator(value: number) {
+  let result: paymentResponse;
+
+  if (getRandomInt(0, 1)) {
+    result = {
+      value: 3*value,
+      transactionId: generateRandomString(64),
+      result: "TRANSACAO_EFETUADA",
+    };
+  } else {
+    result = {
+      value: 3*value,
+      transactionId: generateRandomString(64),
+      result: "TRANSACAO_NAO_EFETUADA",
     };
   }
   return result;
@@ -106,34 +128,39 @@ export const addTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
       let result: CallableResponse;
-      const entrada: FirebaseFirestore.Timestamp =
-      admin.firestore.Timestamp.now();
 
-      const saida =
-        new admin.firestore
-            .Timestamp(entrada.seconds + (data.estadia * 3600)
-                , entrada.nanoseconds);
+      const paymentResult = paymentSimulator(data.estadia);
 
-      const t: Ticket = {
-        placa: data.placa,
-        horaEntrada: entrada,
-        horaSaida: saida,
-      };
-      const errorcode = errorCode(t);
-      const errormessage = errorMessage(errorcode);
+      payment.add(paymentResult);
 
-      if (errorcode == 3 || errorcode == 4) {
-        result = {
-          status: "ERROR",
-          message: errormessage,
-          payload: JSON.parse(JSON.stringify({placa: null})),
+      if (data.payment === 1 ||
+        paymentResult.result === "TRANSACAO_EFETUADA") {
+        const entrada: FirebaseFirestore.Timestamp =
+        admin.firestore.Timestamp.now();
+
+        const saida =
+          new admin.firestore
+              .Timestamp(entrada.seconds + (data.estadia * 3600)
+                  , entrada.nanoseconds);
+
+        const t: Ticket = {
+          placa: data.placa,
+          horaEntrada: entrada,
+          horaSaida: saida,
+          transactionId: paymentResult.transactionId,
         };
-      } else {
+
         await ticket.add(t);
         result = {
           status: "SUCCESS",
           message: "Veículo inserido com sucesso",
-          payload: JSON.parse(JSON.stringify({placa: t.placa})),
+          payload: paymentResult.transactionId,
+        };
+      } else {
+        result = {
+          status: "ERROR",
+          message: "Transação não efetuada - Tente outro cartão",
+          payload: paymentResult.transactionId,
         };
       }
 
@@ -166,12 +193,14 @@ export const searchTicket = functions
         message: "Veículo não registrado",
         payload: JSON.parse(JSON.stringify({placa: null})),
       };
+
       snapshot.forEach((doc) => {
         const d = doc.data();
         const plateTicket: Ticket = {
           placa: d.placa,
           horaEntrada: d.horaEntrada,
           horaSaida: d.horaSaida,
+          transactionId: d.transactionId,
         };
 
         if (data.placa === plateTicket.placa) {
@@ -179,30 +208,31 @@ export const searchTicket = functions
             placa: plateTicket.placa,
             horaEntrada: plateTicket.horaEntrada,
             horaSaida: plateTicket.horaSaida,
+            transactionId: plateTicket.transactionId,
           };
           result = validateTime(p);
         }
       });
-      functions.logger.info(result.status.toString());
+
       return result;
     });
 
-/* export const getZonaAzul = functions
+export const getPoints = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {
-      functions.logger.info("getZonaAzul - Iniciada.");
-      const itinerario:Array<ZonaAzul> = []
-      const snapshot = await colZonaAzul.get();
+      const snapshot = await itinerary.get();
+      const points:FirebaseFirestore.DocumentData = [];
 
-      let tempMarker: ZonaAzul;
       snapshot.forEach((doc) => {
-        const d = doc.data();
-        tempMarker = {
-          LatLng: d.LatLng,
-          title: d.title,
-          snippet: d.snippet
-        };
-        itinerario.push(tempMarker);
+        points.push(doc.data());
       });
-      return itinerario;
-    });*/
+      return points;
+    });
+
+export const pixKey = functions
+    .region("southamerica-east1")
+    .https.onCall(async (data, context) => {
+      const pix = generateRandomString(32);
+
+      return pix;
+    });
