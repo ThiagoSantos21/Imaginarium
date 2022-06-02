@@ -111,7 +111,7 @@ class _mapsState extends State<Maps> {
     var i = 0;
     while( i < geoPoints.length - 1) {
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          "AIzaSyCpGe9tvLJgzYdK4kWevYbG4re9f_zyuik",
+          "API_KEY",
           PointLatLng(geoPoints[i].latitude, geoPoints[i].longitude),
           PointLatLng(geoPoints[i+1].latitude, geoPoints[i+1].longitude)
       );
