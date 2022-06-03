@@ -167,19 +167,6 @@ export const addTicket = functions
       return result;
     });
 
-/* export const addMarker = functions
-    .region("southamerica-east1")
-    .https.onCall(async (data, context) => {
-      const m: Marker = {
-        Name: data.Name,
-        LatLng: data.LatLng,
-        Address: data.Address,
-      };
-      await marker.add(m);
-
-      return m;
-    }); */
-
 export const searchTicket = functions
     .region("southamerica-east1")
     .https.onCall(async (data, context) => {

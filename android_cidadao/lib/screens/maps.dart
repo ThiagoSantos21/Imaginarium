@@ -123,15 +123,7 @@ class _mapsState extends State<Maps> {
       }
       i++;
     }
-    setState(() {
-      /*_polylines.add(
-          Polyline(
-              width: 5,
-              polylineId: PolylineId('Route'),
-              color: Colors.blue,
-              points: polygonCoords
-          )
-      );*/
+    setState(() { 
       _polygon.add(Polygon(
         polygonId: PolygonId('Route 1'),
         points: polygonCoords,
